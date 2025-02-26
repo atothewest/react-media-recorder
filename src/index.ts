@@ -19,6 +19,8 @@ export type ReactMediaRecorderRenderProps = {
   isAudioMuted: boolean;
   previewStream: MediaStream | null;
   previewAudioStream: MediaStream | null;
+  startPreviewStream: () => void;
+  stopPreviewStream: () => void;
   clearBlobUrl: () => void;
 };
 
@@ -314,6 +316,18 @@ export function useReactMediaRecorder({
     }
   };
 
+  const startPreviewStream = () => {
+    if (!mediaStream.current) {
+      getMediaStream();
+    }
+  };
+
+  const stopPreviewStream = () => {
+    if (mediaStream.current) {
+      mediaStream.current.getTracks().forEach((track) => track.stop());
+    }
+  };
+
   return {
     error: RecorderErrors[error],
     muteAudio: () => muteAudio(true),
@@ -338,6 +352,8 @@ export function useReactMediaRecorder({
       setMediaBlobUrl(undefined);
       setStatus("idle");
     },
+    startPreviewStream,
+    stopPreviewStream,
   };
 }
 
